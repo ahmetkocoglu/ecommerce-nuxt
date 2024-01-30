@@ -1,5 +1,9 @@
+<script setup>
+const router = useRouter()
+
+</script>
 <template>
     <div>
-      Parent
+      Parent {{ router.currentRoute }}
     </div>
   </template>
