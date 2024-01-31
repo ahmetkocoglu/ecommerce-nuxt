@@ -1,14 +1,32 @@
 <script setup>
 import { ref, watch } from 'vue';
+import axios from 'axios';
+import { StreamBarcodeReader } from 'vue-barcode-reader';
 
 const search = ref('')
+const products = ref([])
 
 watch(
-  () => search.value,
-  (sum, abc) => {
-    console.log(`${sum} ${abc}`)
-  }
+    () => search.value,
+    async (newValue, oldValue) => {
+        console.log(`${newValue} ${oldValue}`)
+        await axios.get(`http://localhost:3050/api/v1/product/search/${newValue}`)
+            .then((res) => {
+                console.log(res.data);
+                products.value = res.data.rows
+            }).catch(error => {
+
+            });
+    }
 )
+
+const onDecode = (text) => {
+    search.value = text;
+};
+
+const onLoaded = () => {
+    console.log("loaded");
+};
 </script>
 <template>
     <section class="bg-white dark:bg-gray-900">
@@ -19,11 +37,24 @@ watch(
             <div>
                 <label for="title" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Product
                     Title</label>
-                <input type="text" id="title"
-                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 dark:shadow-sm-light"
-                    placeholder="Product title" required v-model="search">
+                <div>
+                    <div class="relative">
+                        <input type="text" class="w-full pl-4 pr-4 py-2 border rounded-lg" placeholder="search"
+                            v-model="search" />
+                        <div class="absolute inset-y-0 right-5 pl-3 flex items-center pointer-events-none z-50">
+                            <span role="button" class="cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 3.75 9.375v-4.5ZM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 0 1-1.125-1.125v-4.5ZM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 13.5 9.375v-4.5Z" />
+  <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 6.75h.75v.75h-.75v-.75ZM6.75 16.5h.75v.75h-.75v-.75ZM16.5 6.75h.75v.75h-.75v-.75ZM13.5 13.5h.75v.75h-.75v-.75ZM13.5 19.5h.75v.75h-.75v-.75ZM19.5 13.5h.75v.75h-.75v-.75ZM19.5 19.5h.75v.75h-.75v-.75ZM16.5 16.5h.75v.75h-.75v-.75Z" />
+</svg></span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            {{ search }}
         </div>
+
+        <StreamBarcodeReader @decode="onDecode" @loaded="onLoaded" class="mb-3" style="width: 400px"
+            v-if="search === 'abc'"></StreamBarcodeReader>
+        {{ products }}
     </section>
 </template>
