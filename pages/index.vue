@@ -1,5 +1,14 @@
+<script setup>
+import Test from '~/components/test.vue';
+
+
+</script>
+
 <template>
     <div>
-      Home
+      Home 
+    </div>
+    <div>
+      <Test val="test"/>
     </div>
   </template>

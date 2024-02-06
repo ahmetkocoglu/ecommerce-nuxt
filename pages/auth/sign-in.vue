@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import axios from 'axios';
+const router = useRouter()
 
 const email = ref("abc@xyz.com")
 const password = ref("123456")
@@ -17,6 +18,9 @@ const submit = () => {
         console.log(res.data.user);
 
         localStorage.setItem("token", res.data.token)
+
+        router.push("/")
+        //router.replace("/")
     }).catch(error => {
       
     });
@@ -59,8 +63,8 @@ const submit = () => {
 
                 <div>
                     <button type="submit"
-                        class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Sign
-                        in</button>
+                        class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                        Sign in</button>
                 </div>
             </form>
         </div>
