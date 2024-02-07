@@ -1,9 +1,12 @@
 <script setup>
 import { ref } from 'vue';
 import axios from 'axios';
+import Swal from 'sweetalert2'
 const route = useRoute()
+const router = useRouter()
 
 const form = ref({
+    id: null,
     title: '',
     seo: '',
     description: '',
@@ -14,21 +17,42 @@ const form = ref({
 })
 
 onMounted(async () => {
-    console.log(route.params.id);
-    await axios.get(`http://localhost:3050/api/v1/product/${route.params.id}?id=true`).then((res) => {
-        console.log(res.data);
-        form.value = res.data.row
-    }).catch(error => {
+    if (route.params.id) {
+        await axios.get(`http://localhost:3050/api/v1/product/${route.params.id}?id=true`).then((res) => {
+            console.log(res.data.row);
+            form.value = res.data.row
+        }).catch(error => {
 
-    });
+        })
+    }
 })
 
 const submit = () => {
-    axios.post('http://localhost:3050/api/v1/product', form.value).then((res) => {
+    if (form.value.id) {
+        axios.put('http://localhost:3050/api/v1/product', form.value).then((res) => {
+            Swal.fire({
+                title: 'Good update!',
+                text: "You clicked the button!",
+                icon: "success"
+            });
+            form.value.id = res.data.data.id
+            router.replace(`/dashboard/product/${res.data.data.id}`)
+        }).catch(error => {
 
-    }).catch(error => {
+        });
+    } else {
+        axios.post('http://localhost:3050/api/v1/product', form.value).then((res) => {
+            Swal.fire({
+                title: 'Good insert!',
+                text: "You clicked the button!",
+                icon: "success"
+            });
+            form.value.id = res.data.data.id
+            router.replace(`/dashboard/product/${res.data.data.id}`)
+        }).catch(error => {
 
-    });
+        });
+    }
 }
 </script>
 <template>
