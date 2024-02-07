@@ -15,7 +15,7 @@ const form = ref({
 
 onMounted(async () => {
     console.log(route.params.id);
-    await axios.get(`http://localhost:3050/api/v1/product/${route.params.id}&id=true`).then((res) => {
+    await axios.get(`http://localhost:3050/api/v1/product/${route.params.id}?id=true`).then((res) => {
         console.log(res.data);
         form.value = res.data.row
     }).catch(error => {
